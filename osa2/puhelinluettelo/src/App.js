@@ -3,12 +3,14 @@ import personService from './services/persons'
 import NewPersonForm from './components/NewPersonForm'
 import Filter from './components/Filter'
 import Numbers from './components/Numbers'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [notification, setNotification] = useState({text: null, isError: false})
 
   useEffect(() => {
     personService
@@ -18,13 +20,37 @@ const App = () => {
       })
   }, [])
 
-  const editPerson = (person, newNumber) => {
-    const newPerson = {...person, number: newNumber}
+  function notify(text, isError) {
+    setNotification({
+      ...notification,
+      text: text,
+      isError: isError
+    })
+    setTimeout(() => {
+      setNotification({
+        ...notification,
+        text: null,
+        isError: false
+      })
+    }, 5000)
+  }
+
+  const editPerson = (changedPerson, newNumber) => {
+    const newPerson = {...changedPerson, number: newNumber}
 
     personService
-      .edit(person.id, newPerson)
+      .edit(changedPerson.id, newPerson)
       .then(editedPerson => {
         setPersons(persons.map(person => person.id !== editedPerson.id ? person : editedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
+      .then(() => {
+        notify(`Successfully edited ${changedPerson.name} in the phonebook.`, false)
+      })
+      .catch(error => {
+        notify(`Information of ${changedPerson.name} has already been removed from server.`, true)
+        setPersons(persons.filter(person => person.id !== changedPerson.id))
         setNewName('')
         setNewNumber('')
       })
@@ -52,6 +78,9 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      .then(() => {
+        notify(`Successfully added ${personObj.name} to the phonebook.`, false)
+      })
   }
 
   const deletePerson = (id) => {
@@ -63,6 +92,9 @@ const App = () => {
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
         })
+        .then(() => {
+          notify(`Successfully deleted ${person.name} from the phonebook.`, false)
+        })
     }
   }
 
@@ -70,6 +102,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
+      <Notification text={notification.text} isError={notification.isError} />
       <Filter filter={filter} setFilter={setFilter}/>
 
       <h2>Add a new person</h2>
