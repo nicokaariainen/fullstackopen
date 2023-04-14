@@ -1,9 +1,11 @@
 POST http://localhost:3001/api/blogs HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pYXUiLCJpZCI6IjY0MzkyNTBiN2VjNjE2M2VjM2ZkNDY5YiIsImlhdCI6MTY4MTQ3MDAyNn0.DcosHjAhoM0niQVrtP3W9NyC9ShsrjTVROdWcrn1PTQ
 
 {
-    "title": "Testblog",
-    "author": "Meitsi",
+    "title": "asdasdasdasf",
+    "author": "Mä",
     "url": "http://www.example.com",
-    "likes": 0
+    "likes": 10,
+    "userId": "6439250b7ec6163ec3fd469b"
 }

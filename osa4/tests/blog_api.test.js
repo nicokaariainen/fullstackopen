@@ -5,12 +5,9 @@ const app = require("../app")
 const api = supertest(app)
 const logger = require("../utils/logger")
 const Blog = require("../models/blog")
+const User = require("../models/user")
 const helper = require("./test_helper")
-
-beforeEach(async () => {
-    await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
-})
+const bcrypt = require("bcrypt")
 
 afterAll(async () => {
     await mongoose.connection.close()
@@ -18,8 +15,21 @@ afterAll(async () => {
 
 describe("when there are initially some blogs saved", () => {
     beforeEach(async () => {
+        await User.deleteMany({})
+        const hashedUsers = await Promise.all(helper.initialUsers.map(async user => {
+            const passwordHash = await bcrypt.hash(user.password, 10)
+            return { ...user, passwordHash }
+        }))
+        await User.insertMany(hashedUsers)
+
         await Blog.deleteMany({})
-        await Blog.insertMany(helper.initialBlogs)
+        const dbUsers = await helper.usersInDb()
+        const blogs = helper.initialBlogs.map(blog => {
+            const user = dbUsers.find(user => user.username === blog.user)
+            return { ...blog, user: user.id }
+        })
+        await Blog.insertMany(blogs)
+        helper.token = await helper.getToken()
     })
 
     test("correct number of JSON blogs are returned", async () => {
@@ -50,6 +60,7 @@ describe("when there are initially some blogs saved", () => {
             await api
                 .post("/api/blogs")
                 .send(newBlog)
+                .set("Authorization", "Bearer " + helper.token)
                 .expect(201)
         
             const blogs = await helper.blogsInDb()
@@ -68,6 +79,7 @@ describe("when there are initially some blogs saved", () => {
             await api
                 .post("/api/blogs")
                 .send(newBlog)
+                .set("Authorization", "Bearer " + helper.token)
                 .expect(201)
         
             const blogs = await helper.blogsInDb()
@@ -84,6 +96,7 @@ describe("when there are initially some blogs saved", () => {
             await api
                 .post("/api/blogs")
                 .send(newBlog)
+                .set("Authorization", "Bearer " + helper.token)
                 .expect(400)
         
             const blogs = await helper.blogsInDb()
@@ -99,6 +112,7 @@ describe("when there are initially some blogs saved", () => {
 
             await api
                 .delete(`/api/blogs/${blogToDelete.id}`)
+                .set("Authorization", "Bearer " + helper.token)
                 .expect(204)
 
             const blogs = await helper.blogsInDb()
@@ -111,7 +125,20 @@ describe("when there are initially some blogs saved", () => {
             const invalidId = "miau"
             await api
                 .delete(`/api/blogs/${invalidId}`)
+                .set("Authorization", "Bearer " + helper.token)
                 .expect(400)
+
+            const blogs = await helper.blogsInDb()
+            expect(blogs).toHaveLength(helper.initialBlogs.length)
+        })
+
+        test("deleting fails when token is invalid", async () => {
+            const initialBlogs = await helper.blogsInDb()
+            const blogToDelete = initialBlogs[0]
+
+            await api
+                .delete(`/api/blogs/${blogToDelete.id}`)
+                .expect(401)
 
             const blogs = await helper.blogsInDb()
             expect(blogs).toHaveLength(helper.initialBlogs.length)
@@ -176,5 +203,101 @@ describe("when there are initially some blogs saved", () => {
             const updatedBlog = blogs.find(blog => blog.id === blogToUpdate.id)
             expect(updatedBlog.likes).toBe(blogToUpdate.likes)
         })
+    })
+})
+
+describe("when there are initially users in db", () => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+
+        const hashedUsers = await Promise.all(helper.initialUsers.map(async user => {
+            const passwordHash = await bcrypt.hash(user.password, 10)
+            return { ...user, passwordHash }
+        }))
+        await User.insertMany(hashedUsers)
+    })
+
+    test("creation succeeds with a fresh username", async () => {
+        const initialUsers = await helper.usersInDb()
+
+        const newUser = {
+            username: "kissa",
+            name: "miau",
+            password: "salainen",
+        }
+
+        await api
+            .post("/api/users")
+            .send(newUser)
+            .expect(201)
+            .expect("Content-Type", /application\/json/)
+
+        const users = await helper.usersInDb()
+        expect(users).toHaveLength(initialUsers.length + 1)
+        const usernames = users.map(u => u.username)
+        expect(usernames).toContain(newUser.username)
+    })
+
+    test("creation fails with proper statuscode and message if username already taken", async () => {
+        const initialUsers = await helper.usersInDb()
+
+        const newUser = {
+            username: "testi",
+            name: "Test",
+            password: "root"
+        }
+
+        const result = await api
+            .post("/api/users")
+            .send(newUser)
+            .expect(400)
+            .expect("Content-Type", /application\/json/)
+
+        expect(result.body.error).toContain("`username` to be unique")
+
+        const users = await helper.usersInDb()
+        expect(users).toHaveLength(initialUsers.length)
+    })
+
+    test("creation fails with proper statuscode and message if username not valid", async () => {
+        const initialUsers = await helper.usersInDb()
+
+        const newUser = {
+            username: "aa",
+            name: "Test",
+            password: "test"
+        }
+
+        const result = await api
+            .post("/api/users")
+            .send(newUser)
+            .expect(400)
+            .expect("Content-Type", /application\/json/)
+
+        expect(result.body.error).toContain("is shorter than the minimum allowed length")
+
+        const users = await helper.usersInDb()
+        expect(users).toHaveLength(initialUsers.length)
+    })
+
+    test("creation fails with proper statuscode and message if password not valid", async () => {
+        const initialUsers = await helper.usersInDb()
+
+        const newUser = {
+            username: "test",
+            name: "Test",
+            password: "aa"
+        }
+
+        const result = await api
+            .post("/api/users")
+            .send(newUser)
+            .expect(400)
+            .expect("Content-Type", /application\/json/)
+
+        expect(result.body.error).toContain("password must be at least 3 characters long")
+
+        const users = await helper.usersInDb()
+        expect(users).toHaveLength(initialUsers.length)
     })
 })
