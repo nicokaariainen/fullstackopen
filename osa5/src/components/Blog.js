@@ -1,7 +1,7 @@
 import { useState } from "react"
 import PropTypes from "prop-types"
 
-const Blog = ({ blog, updateBlog, deleteBlog }) => {
+const Blog = ({ blog, loggedUser, updateBlog, deleteBlog }) => {
   const [visible, setVisible] = useState(false)
 
   const blogStyle = {
@@ -12,7 +12,7 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
     marginBottom: 5
   }
 
-  const addedByUser = blog.user.username === JSON.parse(window.localStorage.getItem("loggedBlogappUser")).username
+  const addedByUser = blog.user.username === loggedUser.username
 
   const handleLike = (blog) => {
     const updatedBlog = {
@@ -29,22 +29,22 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
   }
 
   return(
-    <div style={blogStyle}>
+    <div style={blogStyle} data-testid="title">
       {blog.title} {blog.author} <button onClick={() => setVisible(!visible)}>{visible ? "hide" : "view"}</button>
       <div style={{ display: visible ? "" : "none" }}>
-        <div>{blog.url}</div>
-        <div>{blog.likes} likes <button onClick={() => handleLike(blog)}>like</button></div>
-        <div>added by {blog.user.username}</div>
+        <div data-testid="url">{blog.url}</div>
+        <div data-testid="likes">{blog.likes} likes <button onClick={() => handleLike(blog)}>like</button></div>
+        <div data-testid="user">added by {blog.user.username}</div>
         <div style= {{ display: addedByUser ? "" : "none" }}><button onClick={() => handleDelete(blog)}>remove</button></div>
       </div>
     </div>
   )
 }
 
-Blog.PropTypes = {
+Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  updateBlog: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired
+  updateBlog: PropTypes.func,
+  deleteBlog: PropTypes.func
 }
 
 export default Blog
