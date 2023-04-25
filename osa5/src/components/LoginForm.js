@@ -32,7 +32,7 @@ const LoginForm = ({ setUser, notify }) => {
           username
           <input
             type="text"
-            name="Username"
+            id="username"
             value={username}
             onChange={({ target }) => setUsername(target.value)}
           />
@@ -41,12 +41,12 @@ const LoginForm = ({ setUser, notify }) => {
           password
           <input
             type="password"
-            name="Password"
+            id="password"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
+        <button type="submit" id="login-button">login</button>
       </form>
     </div>
   )
