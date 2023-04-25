@@ -100,7 +100,7 @@ const App = () => {
         <CreateForm createBlog={createBlog}/>
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog}/>
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} loggedUser={user}/>
       ).sort((a,b) => b.props.blog.likes - a.props.blog.likes)}
     </div>
   )
