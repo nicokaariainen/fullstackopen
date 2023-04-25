@@ -65,7 +65,7 @@ describe("blog component", () => {
     expect(elem3).toHaveTextContent("added by Test username")
   })
 
-  test("like button is pressed pressed twice", async () => {
+  test("like button is pressed twice", async () => {
     const blog = {
       title: "Test title",
       author: "Test author",
