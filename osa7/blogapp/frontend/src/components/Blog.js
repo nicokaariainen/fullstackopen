@@ -1,8 +1,12 @@
 import { useState } from "react"
 import PropTypes from "prop-types"
+import { handleDeleteBlog, handleUpdateBlog } from "../reducers/blogsReducer"
+import { useDispatch } from "react-redux"
+import { setNotification } from "../reducers/notificationReducer"
 
-const Blog = ({ blog, loggedUser, updateBlog, deleteBlog }) => {
+const Blog = ({ blog, loggedUser }) => {
   const [visible, setVisible] = useState(false)
+  const dispatch = useDispatch()
 
   const blogStyle = {
     paddingTop: 10,
@@ -19,12 +23,23 @@ const Blog = ({ blog, loggedUser, updateBlog, deleteBlog }) => {
       ...blog,
       likes: blog.likes + 1,
     }
-    updateBlog(updatedBlog)
+    dispatch(handleUpdateBlog(updatedBlog))
   }
 
-  const handleDelete = (blog) => {
+  const handleDelete = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      deleteBlog(blog)
+      const success = await dispatch(handleDeleteBlog(blog))
+      if (success) {
+        dispatch(
+          setNotification(
+            `blog ${blog.title} by ${blog.author} deleted`,
+            5,
+            false
+          )
+        )
+      } else {
+        dispatch(setNotification("Error deleting blog", 5, true))
+      }
     }
   }
 
