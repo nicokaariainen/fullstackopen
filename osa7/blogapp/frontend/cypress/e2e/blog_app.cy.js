@@ -1,22 +1,22 @@
-describe("Blog app", function() {
-  beforeEach(function() {
+describe("Blog app", function () {
+  beforeEach(function () {
     cy.request("POST", `${Cypress.env("BACKEND")}/testing/reset`)
     const user = {
       name: "Cypress",
       username: "cypress",
-      password: "cypress"
+      password: "cypress",
     }
     cy.request("POST", `${Cypress.env("BACKEND")}/users/`, user)
     cy.visit("")
   })
 
-  it("Login form is shown", function() {
+  it("Login form is shown", function () {
     cy.contains("log in to application")
     cy.get("input").length === 2
   })
 
-  describe("Login", function() {
-    it("succeeds with correct credentials", function() {
+  describe("Login", function () {
+    it("succeeds with correct credentials", function () {
       cy.get("#username").type("cypress")
       cy.get("#password").type("cypress")
       cy.get("#login-button").click()
@@ -24,7 +24,7 @@ describe("Blog app", function() {
       cy.contains("Cypress logged in")
     })
 
-    it("fails with wrong credentials", function() {
+    it("fails with wrong credentials", function () {
       cy.get("#username").type("cypress")
       cy.get("#password").type("kissa")
       cy.get("#login-button").click()
@@ -34,12 +34,12 @@ describe("Blog app", function() {
     })
   })
 
-  describe("When logged in", function() {
-    beforeEach(function() {
+  describe("When logged in", function () {
+    beforeEach(function () {
       cy.login({ username: "cypress", password: "cypress" })
     })
 
-    it("A blog can be created", function() {
+    it("A blog can be created", function () {
       cy.contains("create new blog").click()
       cy.get("#title").type("Cypress blog")
       cy.get("#author").type("Cypress")
@@ -49,24 +49,24 @@ describe("Blog app", function() {
       cy.contains("Cypress blog")
     })
 
-    describe("and a blog exists", function() {
-      beforeEach(function() {
+    describe("and a blog exists", function () {
+      beforeEach(function () {
         cy.createBlog({
           title: "Cypress blog",
           author: "Cypress",
           url: "www.example.com",
-          likes: 0
+          likes: 0,
         })
       })
 
-      it("the blog can be liked", function() {
+      it("the blog can be liked", function () {
         cy.contains("view").click()
         cy.contains("0 likes")
         cy.contains("like").click()
         cy.contains("1 likes")
       })
 
-      it("the blog can be deleted", function() {
+      it("the blog can be deleted", function () {
         cy.contains("view").click()
         cy.get("#remove-blog-button").click()
         cy.contains("blog Cypress blog by Cypress deleted")
@@ -74,29 +74,29 @@ describe("Blog app", function() {
       })
     })
 
-    describe("and multiple blogs exist", function() {
-      beforeEach(function() {
+    describe("and multiple blogs exist", function () {
+      beforeEach(function () {
         cy.createBlog({
           title: "Cypress blog",
           author: "Cypress",
           url: "www.example.com",
-          likes: 0
+          likes: 0,
         })
         cy.createBlog({
           title: "Cypress 2 blog",
           author: "Cypress",
           url: "www.example.com",
-          likes: 1
+          likes: 1,
         })
         cy.createBlog({
           title: "Cypress 3 blog",
           author: "Cypress",
           url: "www.example.com",
-          likes: 2
+          likes: 2,
         })
       })
 
-      it("blogs are ordered by likes", function() {
+      it("blogs are ordered by likes", function () {
         cy.get(".blog").eq(0).should("contain", "Cypress 3 blog")
         cy.get(".blog").eq(1).should("contain", "Cypress 2 blog")
         cy.get(".blog").eq(2).should("contain", "Cypress blog")
@@ -119,24 +119,24 @@ describe("Blog app", function() {
     })
   })
 
-  describe("When multiple users exist", function() {
-    beforeEach(function() {
+  describe("When multiple users exist", function () {
+    beforeEach(function () {
       cy.login({ username: "cypress", password: "cypress" })
       cy.createBlog({
         title: "Cypress blog",
         author: "Cypress",
         url: "www.example.com",
-        likes: 0
+        likes: 0,
       })
       const user = {
         name: "Cypress2",
         username: "cypress2",
-        password: "cypress2"
+        password: "cypress2",
       }
       cy.request("POST", `${Cypress.env("BACKEND")}/users/`, user)
     })
 
-    it("only the creator can see blog delete button", function() {
+    it("only the creator can see blog delete button", function () {
       cy.contains("view").click()
       cy.get("#remove-blog-button").should("exist")
       cy.contains("logout").click()

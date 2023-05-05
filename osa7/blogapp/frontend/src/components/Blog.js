@@ -9,7 +9,7 @@ const Blog = ({ blog, loggedUser, updateBlog, deleteBlog }) => {
     paddingLeft: 2,
     border: "solid",
     borderWidth: 2,
-    marginBottom: 5
+    marginBottom: 5,
   }
 
   const addedByUser = blog.user.username === loggedUser.username
@@ -17,7 +17,7 @@ const Blog = ({ blog, loggedUser, updateBlog, deleteBlog }) => {
   const handleLike = (blog) => {
     const updatedBlog = {
       ...blog,
-      likes: blog.likes + 1
+      likes: blog.likes + 1,
     }
     updateBlog(updatedBlog)
   }
@@ -28,14 +28,30 @@ const Blog = ({ blog, loggedUser, updateBlog, deleteBlog }) => {
     }
   }
 
-  return(
+  return (
     <div style={blogStyle} data-testid="title" className="blog">
-      {blog.title} {blog.author} <button className="view-button" onClick={() => setVisible(!visible)}>{visible ? "hide" : "view"}</button>
+      {blog.title} {blog.author}{" "}
+      <button className="view-button" onClick={() => setVisible(!visible)}>
+        {visible ? "hide" : "view"}
+      </button>
       <div style={{ display: visible ? "" : "none" }}>
         <div data-testid="url">{blog.url}</div>
-        <div data-testid="likes">{blog.likes} likes <button className="like-button" onClick={() => handleLike(blog)}>like</button></div>
+        <div data-testid="likes">
+          {blog.likes} likes{" "}
+          <button className="like-button" onClick={() => handleLike(blog)}>
+            like
+          </button>
+        </div>
         <div data-testid="user">added by {blog.user.username}</div>
-        {addedByUser ? <div data-testid="remove"><button id="remove-blog-button" onClick={() => handleDelete(blog)}>remove</button></div> : ""}
+        {addedByUser ? (
+          <div data-testid="remove">
+            <button id="remove-blog-button" onClick={() => handleDelete(blog)}>
+              remove
+            </button>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   )
@@ -44,7 +60,7 @@ const Blog = ({ blog, loggedUser, updateBlog, deleteBlog }) => {
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   updateBlog: PropTypes.func,
-  deleteBlog: PropTypes.func
+  deleteBlog: PropTypes.func,
 }
 
 export default Blog

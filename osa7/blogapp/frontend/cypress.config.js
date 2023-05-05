@@ -9,5 +9,5 @@ module.exports = defineConfig({
   },
   env: {
     BACKEND: "http://localhost:3003/api",
-  }
+  },
 })

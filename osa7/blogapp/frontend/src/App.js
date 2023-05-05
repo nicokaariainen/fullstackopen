@@ -9,7 +9,10 @@ import Togglable from "./components/Togglable"
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState({ text: null, isError: false })
+  const [notification, setNotification] = useState({
+    text: null,
+    isError: false,
+  })
   const blogFormRef = useRef()
 
   const fetchBlogs = async () => {
@@ -34,13 +37,13 @@ const App = () => {
     setNotification({
       ...notification,
       text: text,
-      isError: isError
+      isError: isError,
     })
     setTimeout(() => {
       setNotification({
         ...notification,
         text: null,
-        isError: false
+        isError: false,
       })
     }, 5000)
   }
@@ -79,12 +82,11 @@ const App = () => {
     }
   }
 
-
   if (user === null) {
     return (
       <>
         <Notification text={notification.text} isError={notification.isError} />
-        <LoginForm  setUser={setUser} notify={notify}/>
+        <LoginForm setUser={setUser} notify={notify} />
       </>
     )
   }
@@ -94,14 +96,30 @@ const App = () => {
       <Notification text={notification.text} isError={notification.isError} />
       <h2>blogs</h2>
       <p>
-        {user.name} logged in <button onClick={() => {setUser(null); window.localStorage.removeItem("loggedBlogappUser")}}>logout</button>
+        {user.name} logged in{" "}
+        <button
+          onClick={() => {
+            setUser(null)
+            window.localStorage.removeItem("loggedBlogappUser")
+          }}
+        >
+          logout
+        </button>
       </p>
       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <CreateForm createBlog={createBlog}/>
+        <CreateForm createBlog={createBlog} />
       </Togglable>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} loggedUser={user}/>
-      ).sort((a,b) => b.props.blog.likes - a.props.blog.likes)}
+      {blogs
+        .map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateBlog={updateBlog}
+            deleteBlog={deleteBlog}
+            loggedUser={user}
+          />
+        ))
+        .sort((a, b) => b.props.blog.likes - a.props.blog.likes)}
     </div>
   )
 }

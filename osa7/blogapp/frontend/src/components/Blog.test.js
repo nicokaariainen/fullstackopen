@@ -14,14 +14,14 @@ describe("blog component", () => {
       user: {
         username: "Test username",
         name: "Test name",
-        id: "Test id"
-      }
+        id: "Test id",
+      },
     }
 
     const user = {
       username: "Test username",
       name: "Test name",
-      id: "Test id"
+      id: "Test id",
     }
 
     render(<Blog blog={blog} loggedUser={user} />)
@@ -39,14 +39,14 @@ describe("blog component", () => {
       user: {
         username: "Test username",
         name: "Test name",
-        id: "Test id"
-      }
+        id: "Test id",
+      },
     }
 
     const user = {
       username: "Test username",
       name: "Test name",
-      id: "Test id"
+      id: "Test id",
     }
 
     render(<Blog blog={blog} loggedUser={user} />)
@@ -74,14 +74,14 @@ describe("blog component", () => {
       user: {
         username: "Test username",
         name: "Test name",
-        id: "Test id"
-      }
+        id: "Test id",
+      },
     }
 
     const user = {
       username: "Test username",
       name: "Test name",
-      id: "Test id"
+      id: "Test id",
     }
 
     const mockHandler = jest.fn()

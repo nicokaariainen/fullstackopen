@@ -26,8 +26,8 @@ const mostLikes = (blogs) => {
   }
 
   var authors = []
-  blogs.forEach(blog => {
-    let author = authors.find(author => author.author === blog.author)
+  blogs.forEach((blog) => {
+    let author = authors.find((author) => author.author === blog.author)
     if (author) {
       author.likes += blog.likes
     } else {
@@ -44,10 +44,9 @@ const mostLikes = (blogs) => {
   }, authors[0])
 }
 
-
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostLikes
+  mostLikes,
 }

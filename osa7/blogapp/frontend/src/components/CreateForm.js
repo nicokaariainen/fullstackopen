@@ -12,7 +12,7 @@ const CreateForm = ({ createBlog }) => {
     const success = await createBlog({
       title: title,
       author: author,
-      url: url
+      url: url,
     })
 
     if (success) {
@@ -27,7 +27,7 @@ const CreateForm = ({ createBlog }) => {
       <h2>create new</h2>
       <form onSubmit={addBlog}>
         <div>
-            title:
+          title:
           <input
             type="text"
             value={title}
@@ -37,7 +37,7 @@ const CreateForm = ({ createBlog }) => {
           />
         </div>
         <div>
-            author:
+          author:
           <input
             type="text"
             value={author}
@@ -47,7 +47,7 @@ const CreateForm = ({ createBlog }) => {
           />
         </div>
         <div>
-            url:
+          url:
           <input
             type="text"
             value={url}
@@ -56,7 +56,9 @@ const CreateForm = ({ createBlog }) => {
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button type="submit" id="create-blog-button">create</button>
+        <button type="submit" id="create-blog-button">
+          create
+        </button>
       </form>
     </>
   )
