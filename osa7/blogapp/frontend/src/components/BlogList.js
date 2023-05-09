@@ -1,7 +1,9 @@
 import Blog from "./Blog"
 import { useSelector } from "react-redux"
+import CreateForm from "./CreateForm"
+import Togglable from "./Togglable"
 
-const BlogList = ({ loggedUser }) => {
+const BlogList = () => {
   const blogs = useSelector((state) => state.blogs)
 
   const compareBlogs = (a, b) => {
@@ -12,10 +14,11 @@ const BlogList = ({ loggedUser }) => {
     <div>
       <h2>blogs</h2>
       {blogs
-        .map((blog) => (
-          <Blog key={blog.id} blog={blog} loggedUser={loggedUser} />
-        ))
+        .map((blog) => <Blog key={blog.id} blog={blog} />)
         .sort(compareBlogs)}
+      <Togglable buttonLabel="create new blog">
+        <CreateForm />
+      </Togglable>
     </div>
   )
 }

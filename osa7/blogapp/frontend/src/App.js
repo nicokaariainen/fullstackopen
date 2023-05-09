@@ -1,21 +1,26 @@
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { initializeBlogs } from "./reducers/blogsReducer"
 import { setUser } from "./reducers/userReducer"
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import blogService from "./services/blogs"
 import LoginForm from "./components/LoginForm"
 import Notification from "./components/Notification"
-import CreateForm from "./components/CreateForm"
-import Togglable from "./components/Togglable"
+import Users from "./components/Users"
+import User from "./components/User"
 import BlogList from "./components/BlogList"
+import { initializeUsers } from "./reducers/usersReducer"
 
 const App = () => {
   const user = useSelector((state) => state.user)
-  const blogFormRef = useRef()
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(initializeBlogs())
+  }, [dispatch])
+
+  useEffect(() => {
+    dispatch(initializeUsers())
   }, [dispatch])
 
   useEffect(() => {
@@ -37,24 +42,27 @@ const App = () => {
   }
 
   return (
-    <div>
-      <Notification />
-      <p>
-        {user.name} logged in{" "}
-        <button
-          onClick={() => {
-            dispatch(setUser(null))
-            window.localStorage.removeItem("loggedBlogappUser")
-          }}
-        >
-          logout
-        </button>
-      </p>
-      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <CreateForm />
-      </Togglable>
-      <BlogList loggedUser={user} />
-    </div>
+    <Router>
+      <div>
+        <Notification />
+        <p>
+          {user.name} logged in{" "}
+          <button
+            onClick={() => {
+              dispatch(setUser(null))
+              window.localStorage.removeItem("loggedBlogappUser")
+            }}
+          >
+            logout
+          </button>
+        </p>
+        <Routes>
+          <Route path="/users/:id" element={<User />} />
+          <Route path="/" element={<BlogList />} />
+          <Route path="/users" element={<Users />} />
+        </Routes>
+      </div>
+    </Router>
   )
 }
 
