@@ -1,22 +1,20 @@
-import { useState } from "react"
-import PropTypes from "prop-types"
-import { handleDeleteBlog, handleUpdateBlog } from "../reducers/blogsReducer"
-import { useDispatch, useSelector } from "react-redux"
+import { useParams } from "react-router-dom"
+import { useSelector, useDispatch } from "react-redux"
+import { handleUpdateBlog } from "../reducers/blogsReducer"
+import { handleDeleteBlog } from "../reducers/blogsReducer"
 import { setNotification } from "../reducers/notificationReducer"
 
-const Blog = ({ blog }) => {
-  const [visible, setVisible] = useState(false)
-  const loggedUser = useSelector((state) => state.user)
+const Blog = () => {
   const dispatch = useDispatch()
+  const id = useParams().id
+  const loggedUser = useSelector((state) => state.user)
+  const blog = useSelector((state) =>
+    state.blogs.find((blog) => blog.id === id)
+  )
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 2,
-    marginBottom: 5,
+  if (blog === null || blog === undefined) {
+    return null
   }
-
   const addedByUser = blog.user.username === loggedUser.username
 
   const handleLike = (blog) => {
@@ -45,38 +43,26 @@ const Blog = ({ blog }) => {
   }
 
   return (
-    <div style={blogStyle} data-testid="title" className="blog">
-      {blog.title} {blog.author}{" "}
-      <button className="view-button" onClick={() => setVisible(!visible)}>
-        {visible ? "hide" : "view"}
-      </button>
-      <div style={{ display: visible ? "" : "none" }}>
-        <div data-testid="url">{blog.url}</div>
-        <div data-testid="likes">
-          {blog.likes} likes{" "}
-          <button className="like-button" onClick={() => handleLike(blog)}>
-            like
+    <div>
+      <h2>
+        {blog.title} by {blog.author}
+      </h2>
+      <a href={`https://${blog.url}`}>{blog.url}</a>
+      <br />
+      {blog.likes} likes <button onClick={() => handleLike(blog)}>like</button>
+      <br />
+      added by {blog.user.username}
+      {addedByUser ? (
+        <div data-testid="remove">
+          <button id="remove-blog-button" onClick={() => handleDelete(blog)}>
+            remove
           </button>
         </div>
-        <div data-testid="user">added by {blog.user.username}</div>
-        {addedByUser ? (
-          <div data-testid="remove">
-            <button id="remove-blog-button" onClick={() => handleDelete(blog)}>
-              remove
-            </button>
-          </div>
-        ) : (
-          ""
-        )}
-      </div>
+      ) : (
+        ""
+      )}
     </div>
   )
-}
-
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  updateBlog: PropTypes.func,
-  deleteBlog: PropTypes.func,
 }
 
 export default Blog
