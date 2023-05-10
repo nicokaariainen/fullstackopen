@@ -67,3 +67,12 @@ export const handleDeleteBlog = (blogObject) => {
     }
   }
 }
+
+export const handleCommentBlog = (blogObject, comment) => {
+  return async (dispatch) => {
+    const updatedBlog = await blogService.createComment(blogObject.id, {
+      comment,
+    })
+    dispatch(updateBlog(updatedBlog))
+  }
+}
