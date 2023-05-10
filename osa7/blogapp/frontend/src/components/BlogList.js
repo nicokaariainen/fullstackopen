@@ -5,7 +5,6 @@ import Togglable from "./Togglable"
 import {
   TableContainer,
   Paper,
-  Card,
   Table,
   TableBody,
   TableRow,
