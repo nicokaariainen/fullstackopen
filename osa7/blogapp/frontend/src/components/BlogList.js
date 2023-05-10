@@ -1,10 +1,17 @@
 import Blog from "./Blog"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import CreateForm from "./CreateForm"
 import Togglable from "./Togglable"
+import { initializeBlogs } from "../reducers/blogsReducer"
+import { useEffect } from "react"
 
 const BlogList = () => {
   const blogs = useSelector((state) => state.blogs)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   const compareBlogs = (a, b) => {
     return b.props.blog.likes - a.props.blog.likes

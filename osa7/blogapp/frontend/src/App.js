@@ -1,6 +1,5 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { initializeBlogs } from "./reducers/blogsReducer"
 import { setUser } from "./reducers/userReducer"
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import blogService from "./services/blogs"
@@ -9,19 +8,10 @@ import Notification from "./components/Notification"
 import Users from "./components/Users"
 import User from "./components/User"
 import BlogList from "./components/BlogList"
-import { initializeUsers } from "./reducers/usersReducer"
 
 const App = () => {
   const user = useSelector((state) => state.user)
   const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(initializeBlogs())
-  }, [dispatch])
-
-  useEffect(() => {
-    dispatch(initializeUsers())
-  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser")

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 const Users = () => {
   const users = useSelector((state) => state.users)
 
-  if (users === null) {
+  if (users.length === 0) {
     return null
   }
 
