@@ -1,21 +1,42 @@
-import BlogListItem from "./BlogListItem"
+import { Link } from "react-router-dom"
 import { useSelector } from "react-redux"
 import CreateForm from "./CreateForm"
 import Togglable from "./Togglable"
+import {
+  TableContainer,
+  Paper,
+  Card,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@mui/material"
 
 const BlogList = () => {
   const blogs = useSelector((state) => state.blogs)
 
   const compareBlogs = (a, b) => {
-    return b.props.blog.likes - a.props.blog.likes
+    return b.likes - a.likes
   }
 
   return (
     <div>
       <h2>blogs</h2>
-      {blogs
-        .map((blog) => <BlogListItem key={blog.id} blog={blog} />)
-        .sort(compareBlogs)}
+
+      <TableContainer component={Paper}>
+        <Table>
+          <TableBody>
+            {[...blogs].sort(compareBlogs).map((blog) => (
+              <TableRow key={blog.id}>
+                <TableCell>
+                  <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                </TableCell>
+                <TableCell>{blog.author}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
       <Togglable buttonLabel="create new blog">
         <CreateForm />
       </Togglable>

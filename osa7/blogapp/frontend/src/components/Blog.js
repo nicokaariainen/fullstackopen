@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
 import { handleUpdateBlog, handleCommentBlog } from "../reducers/blogsReducer"
 import { handleDeleteBlog } from "../reducers/blogsReducer"
@@ -6,6 +6,7 @@ import { setNotification } from "../reducers/notificationReducer"
 
 const Blog = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const id = useParams().id
   const loggedUser = useSelector((state) => state.user)
   const blog = useSelector((state) =>
@@ -36,6 +37,7 @@ const Blog = () => {
             false
           )
         )
+        navigate("/")
       } else {
         dispatch(setNotification("Error deleting blog", 5, true))
       }

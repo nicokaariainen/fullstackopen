@@ -1,13 +1,9 @@
-import React, { useState } from "react"
 import { useDispatch } from "react-redux"
 import { createBlog } from "../reducers/blogsReducer"
 import { setNotification } from "../reducers/notificationReducer"
+import { Button, TextField } from "@mui/material"
 
 const CreateForm = () => {
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
-
   const dispatch = useDispatch()
 
   const addBlog = async (event) => {
@@ -15,22 +11,30 @@ const CreateForm = () => {
 
     const success = await dispatch(
       createBlog({
-        title: title,
-        author: author,
-        url: url,
+        title: event.target.title.value,
+        author: event.target.author.value,
+        url: event.target.url.value,
       })
     )
 
     if (success) {
       dispatch(
-        setNotification(`a new blog ${title} by ${author} added`, 5, false)
+        setNotification(
+          `a new blog ${event.target.title.value} by ${event.target.author.value} added`,
+          5,
+          false
+        )
       )
-      setTitle("")
-      setAuthor("")
-      setUrl("")
+      event.target.title.value = ""
+      event.target.author.value = ""
+      event.target.url.value = ""
     } else {
       dispatch(setNotification("Error creating blog", 5, true))
     }
+  }
+
+  const style = {
+    marginBottom: 1,
   }
 
   return (
@@ -38,38 +42,23 @@ const CreateForm = () => {
       <h2>create new</h2>
       <form onSubmit={addBlog}>
         <div>
-          title:
-          <input
-            type="text"
-            value={title}
-            id="title"
-            placeholder="Blog title"
-            onChange={({ target }) => setTitle(target.value)}
-          />
+          <TextField sx={style} size="small" label="Blog title" id="title" />
         </div>
         <div>
-          author:
-          <input
-            type="text"
-            value={author}
-            id="author"
-            placeholder="Blog author"
-            onChange={({ target }) => setAuthor(target.value)}
-          />
+          <TextField sx={style} size="small" label="Blog author" id="author" />
         </div>
         <div>
-          url:
-          <input
-            type="text"
-            value={url}
-            id="url"
-            placeholder="Blog url"
-            onChange={({ target }) => setUrl(target.value)}
-          />
+          <TextField sx={style} size="small" label="Blog url" id="url" />
         </div>
-        <button type="submit" id="create-blog-button">
+        <Button
+          sx={style}
+          variant="contained"
+          color="success"
+          type="submit"
+          id="create-blog-button"
+        >
           create
-        </button>
+        </Button>
       </form>
     </>
   )
