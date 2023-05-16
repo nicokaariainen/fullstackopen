@@ -138,29 +138,27 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
+    bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
     allBooks: (root, args) => {
-      if (!args.author && !args.genre) return books
-      if (!args.author)
-        return books.filter((b) => b.genres.includes(args.genre))
-      if (!args.genre) return books.filter((b) => b.author === args.author)
-      return books.filter(
-        (b) => b.author === args.author && b.genres.includes(args.genre)
-      )
+      if (!args.author && !args.genre) return Book.find({})
+      if (!args.author) return null // TODO
+      if (!args.genre) return null // TODO
+      return null // TODO
     },
-    allAuthors: () => authors,
+    allAuthors: () => Author.find({}),
   },
 
   Author: {
-    bookCount: (root) => books.filter((b) => b.author === root.name).length,
+    bookCount: (root) => null, // TODO
   },
 
   Mutation: {
     addBook: (root, args) => {
-      if (!authors.find((a) => a.name === args.author)) {
-        authors = authors.concat({ name: args.author, id: uuid() })
+      if (!Author.find({ name: args.author })) {
+        authors = Author.save({ name: args.author, id: uuid() })
       }
+      // TODO from this point forward, not yet modified for 8.13
       const book = { ...args, id: uuid() }
       books = books.concat(book)
       return book
