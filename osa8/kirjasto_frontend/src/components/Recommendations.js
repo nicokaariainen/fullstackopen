@@ -10,7 +10,6 @@ const Recommendations = ({ show }) => {
   })
 
   useEffect(() => {
-    console.log(user)
     if (user.data && user.data.me) {
       setGenre(user.data.me.favoriteGenre)
     }

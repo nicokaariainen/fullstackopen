@@ -12,6 +12,10 @@ const Authors = (props) => {
     return <div>loading...</div>
   }
 
+  if (!authors.data) {
+    return <div>no data</div>
+  }
+
   return (
     <div>
       <h2>authors</h2>
