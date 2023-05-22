@@ -6,6 +6,7 @@ import Login from "./components/Login"
 import Recommendations from "./components/Recommendations"
 import { useApolloClient, useSubscription } from "@apollo/client"
 import { BOOK_ADDED } from "./queries"
+import { ALL_BOOKS } from "./queries"
 
 const App = () => {
   useEffect(() => {
@@ -15,9 +16,21 @@ const App = () => {
     }
   }, [])
 
+  const [chosenGenre, setGenre] = useState(null)
+
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
-      window.alert(`New book added: ${data.data.bookAdded.title}`)
+      const addedBook = data.data.bookAdded
+      window.alert(`New book added: ${addedBook.title}`)
+
+      client.cache.updateQuery(
+        { query: ALL_BOOKS, variables: { chosenGenre } },
+        ({ allBooks }) => {
+          return {
+            allBooks: [...allBooks, addedBook],
+          }
+        }
+      )
     },
   })
 
@@ -54,7 +67,11 @@ const App = () => {
 
       <Authors show={page === "authors"} />
 
-      <Books show={page === "books"} />
+      <Books
+        show={page === "books"}
+        chosenGenre={chosenGenre}
+        setGenre={setGenre}
+      />
 
       <NewBook show={page === "add"} />
 

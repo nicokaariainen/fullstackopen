@@ -1,12 +1,13 @@
 import { useQuery } from "@apollo/client"
-import { BOOKS_BY_GENRE, ME } from "../queries"
+import { ALL_BOOKS, ME } from "../queries"
 import { useEffect, useState } from "react"
 
 const Recommendations = ({ show }) => {
   const [genre, setGenre] = useState(null)
   const user = useQuery(ME, { pollInterval: 2000 })
-  const books = useQuery(BOOKS_BY_GENRE, {
+  const books = useQuery(ALL_BOOKS, {
     variables: { chosenGenre: genre },
+    pollInterval: 2000,
   })
 
   useEffect(() => {
